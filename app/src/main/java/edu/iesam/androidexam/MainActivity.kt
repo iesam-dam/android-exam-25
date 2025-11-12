@@ -1,20 +1,51 @@
 package edu.iesam.androidexam
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
+import edu.iesam.androidexam.core.api.ApiClient
+import edu.iesam.androidexam.databinding.DevelopersActivityBinding
+import edu.iesam.androidexam.feature.developers.data.DeveloperDataRepository
+import edu.iesam.androidexam.feature.developers.data.remote.api.DeveloperApiRemoteDataSource
+import edu.iesam.androidexam.feature.developers.domain.GetDevelopersUseCase
+import edu.iesam.androidexam.feature.developers.presentation.ViewModelDevelopers
+import edu.iesam.androidexam.feature.developers.presentation.adapter.DevelopersAdapter
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: DevelopersActivityBinding
+
+    private val viewModel: ViewModelDevelopers by lazy {
+        ViewModelDevelopers(
+            GetDevelopersUseCase(
+                DeveloperDataRepository(
+                    DeveloperApiRemoteDataSource(ApiClient())
+                )
+            )
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding = DevelopersActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupView()
+        setupObservers()
+        viewModel.loadDevelopers()
+    }
+
+    private fun setupView() {
+        binding.idDevelopersReciclerView.adapter = DevelopersAdapter {
+
         }
+    }
+
+    private fun setupObservers() {
+        val observer = Observer<ViewModelDevelopers.UiState> { uiState ->
+            uiState.developers?.let {
+                (binding.idDevelopersReciclerView.adapter as DevelopersAdapter).submitList(it)
+            }
+        }
+        viewModel.uiState.observe(this, observer)
     }
 }
