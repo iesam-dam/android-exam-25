@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import edu.iesam.androidexam.databinding.ListFragmentBinding
 import edu.iesam.androidexam.feature.androidexam.core.api.ApiClient
 import edu.iesam.androidexam.feature.androidexam.data.DataRepository
@@ -14,6 +16,7 @@ import edu.iesam.androidexam.feature.androidexam.domain.GetAllDevelopersUseCase
 
 class ListFragment : Fragment() {
     private var _binding: ListFragmentBinding? = null
+    private val adapter = AdapterDeveloper(emptyList())
     private val binding get() = _binding!!
 
     private val viewModel = ListViewModel(
@@ -32,24 +35,27 @@ class ListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = ListFragmentBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
-        setUpObserver()
         setUpRecycleView()
+        setUpObserver()
         viewModel.loadDevelopers()
     }
 
     fun setUpObserver(){
-        val observer : Observer<UiState>
-        //Aqui habría que actualizar el Observer
+        val observer = Observer<ListViewModel> { uiState ->
+
+        }
     }
 
     fun setUpRecycleView(){
-        //Aquí habría que actualizar el recycle
+        val recyclerView : RecyclerView = binding.list
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = adapter
+
     }
 
     override fun onDestroyView() {

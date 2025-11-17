@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AndroidExam</string>
+    <string name="name">Name</string>
+    <string name="academic_degree">Academic degree</string>
 </resources>
