@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidExam">
         <activity
-            android:name=".feature.androidexam.presentation.MainActivity"
+            android:name=".feature.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import edu.iesam.androidexam.databinding.ListFragmentBinding
 import edu.iesam.androidexam.feature.androidexam.core.api.ApiClient
 import edu.iesam.androidexam.feature.androidexam.data.DataRepository
 import edu.iesam.androidexam.feature.androidexam.data.remote.api.ApiRemoteDataSource
+import edu.iesam.androidexam.feature.androidexam.domain.ErrorApp
 import edu.iesam.androidexam.feature.androidexam.domain.GetAllDevelopersUseCase
 
 class ListFragment : Fragment() {
@@ -46,8 +48,24 @@ class ListFragment : Fragment() {
     }
 
     fun setUpObserver(){
-        val observer = Observer<ListViewModel> { uiState ->
+        Observer<ListViewModel.UiState> { uiState ->
+            binding.progressbar.isVisible = uiState.isLoading
 
+            uiState.error?.let { error ->
+                val errorMessage = when (error) {
+                    is ErrorApp.InternetError -> "No hay conexión a internet"
+                    is ErrorApp.ServerError -> "Error del servidor"
+                }
+                binding.errorMessage.text = errorMessage
+                binding.errorMessage.isVisible = true
+            } ?: run {
+                binding.errorMessage.isVisible = false
+            }
+
+            uiState.done?.let {
+                listDevelopers ->
+                adapter.updateList(listDevelopers)
+            }
         }
     }
 
@@ -62,5 +80,4 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

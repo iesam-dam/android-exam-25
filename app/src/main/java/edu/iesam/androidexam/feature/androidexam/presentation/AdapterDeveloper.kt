@@ -5,10 +5,11 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.iesam.androidexam.databinding.ListFragmentBinding
 import edu.iesam.androidexam.feature.androidexam.domain.Developers
 
-class AdapterDeveloper(private val dataSet: List<Developers>) :
+class AdapterDeveloper(private var dataSet: List<Developers>) :
     RecyclerView.Adapter<AdapterDeveloper.ViewHolder>() {
 
-    class ViewHolder(private val binding: ListFragmentBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ListFragmentBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
     }
 
@@ -26,6 +27,11 @@ class AdapterDeveloper(private val dataSet: List<Developers>) :
     override fun getItemCount(): Int {
         TODO("Not yet implemented")
     }
+
+    fun updateList(listDevelopers: List<Developers>) {
+        dataSet = listDevelopers
+        notifyDataSetChanged()
     }
+}
 
 
